@@ -19,15 +19,19 @@ Route::prefix('auth')->group( function () {
     Route::get('user', [AuthController::class, 'user']);
     Route::put('user', [AuthController::class, 'update']);
     Route::post('register', [AuthController::class, 'register']);
+    Route::post('avatar', [AuthController::class, 'set_avatar']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('verify', [AuthController::class, 'verify']);
     Route::get('reverify', [AuthController::class, 'reverify']);
     Route::prefix('roles')->group( function () {
         Route::post('/attach', [RolesController::class, 'attach_role']);
+        Route::post('/permission/attach', [RolesController::class, 'add_permission_to_role']);
         Route::post('/create', [RolesController::class, 'create_role']);
         Route::get('/', [RolesController::class, 'list_roles']);
         Route::post('/permissions/create', [RolesController::class, 'create_permission']);
         Route::get('/permissions', [RolesController::class, 'list_permissions']);
+        Route::post('/verify', [RolesController::class, 'verify_role']);
+        Route::post('/verify/permission', [RolesController::class, 'verify_permission']);
     });
 });

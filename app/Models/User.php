@@ -10,10 +10,12 @@ use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Hash;
 use Str; 
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail , HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia;
 
 
     public $guard_name = 'api';
@@ -39,6 +41,8 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'roles',
+        'media'
     ];
 
     /**
@@ -50,6 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'role',
+        'avatar'
+    ];
 
     public static function boot()
     {
@@ -59,6 +67,18 @@ class User extends Authenticatable implements MustVerifyEmail
         });
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatars')
+        ->singleFile()
+        ->useFallbackUrl('/v.png')
+        ->useFallbackPath(public_path('/v.png'));
+    }
+
+    public function getAvatarAttribute() {
+        return $this->getFirstMediaUrl('avatars');
+    }
+
     public function setPasswordAttribute($value){
         $this->attributes['password'] = Hash::make($value);
     }
@@ -66,4 +86,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function otp() {
         return $this->hasOne('App\Models\Auth\Otp','user_id');
     } 
+
+    public function getRoleAttribute() {
+        return $this->roles[0]->name;
+    }
+
 }

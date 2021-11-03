@@ -13,7 +13,8 @@ class RolesController extends Controller
 {
     //
     public function __construct() {
-        $this->middleware(['role:admin']);
+        $this->middleware(['role:admin'])->except(['verify_role']);
+        $this->middleware(['auth:api'])->only(['verify_role']);
     }
 
     public function create_role(Request $request) {
@@ -41,8 +42,13 @@ class RolesController extends Controller
         return $user;
     }
 
-    public function create_permission() {
-        
+    public function create_permission(Request $request) {
+        $validation = $request->validate([
+            'permission_name' => 'required|unique:permissions,name'
+        ]);
+
+        $role = Permission::create(['guard_name' => 'api', 'name' => $request->input('permission_name')]);
+        return response()->json($role, 201);
     }
 
     public function list_permissions() {
@@ -50,5 +56,41 @@ class RolesController extends Controller
         return response()->json($permissions, 200);
     }
 
+    public function verify_role(Request $request) {
+        $validation = $request->validate([
+            'role' => 'required|exists:roles,name'
+        ]);
+
+        $user = \Auth::guard('api')->user();
+        if($user->hasAnyRole(['admin', $request->input('role')])) {
+            return response()->json(['message' => 'ok'], 200);
+        } else {
+            return response()->json(['message' => 'unauthorised'], 401);
+        }
+    }
+
+    public function add_permission_to_role(Request $request) {
+        $validation = $request->validate([
+            'role_name' => 'required|exists:roles,name',
+            'permission_name' => 'required|exists:permissions,name',
+        ]);
+        $role = Role::findByName($request->input('role_name'));
+        $permission = Permission::findByName($request->input('permission_name'));
+        $role->givePermissionTo($permission);
+        return response()->json(['message' => 'ok'], 200);
+    }
+
+    public function verify_permission(Request $request) {
+        $validation = $request->validate([
+            'permission_name' => 'required|exists:permissions,name'
+        ]);
+
+        $user = \Auth::guard('api')->user();
+        if( $user->can($request->input('permission_name'))) {
+            return response()->json(['message' => 'ok'], 200);
+        } else {
+            return response()->json(['message' => 'unauthorised'], 401);
+        }
+    }
 
 }

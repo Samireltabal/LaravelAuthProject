@@ -74,6 +74,14 @@ class AuthController extends Controller
         return response()->json(\Auth::user(), 200);
     }
 
+    public function set_avatar(Request $request) {
+        $validation = $request->validate([
+            'avatar' => 'required'
+        ]);
+        $user = Auth::user();
+        $media = $user->addMediaFromRequest('avatar')->toMediaCollection('avatars');
+        return $user;
+    }
 
     public function update(UpdateRequest $request) {
         $user = \Auth::user();

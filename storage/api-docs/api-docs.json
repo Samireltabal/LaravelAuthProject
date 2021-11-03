@@ -1,22 +1,29 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Syncit Authentication",
-        "description": "Syncit App Authentication",
+        "title": "Syncit Api",
+        "description": "Syncit Api Backend Boilerplate",
         "contact": {
+            "name": "Samir M. Eltabal",
+            "url": "https://www.synciteg.com",
             "email": "Samir@synciteg.com"
         },
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
-        "version": "1.0.0"
+        "version": "0.1.1"
     },
     "servers": [
         {
             "url": "https://app.synciteg.com/api/",
             "description": "Syncit Api Server"
         }
+    ],
+    "tags": [
+        "Authentication",
+        "Roles",
+        "incomplete"
     ],
     "paths": {
         "/auth/login": {
@@ -27,46 +34,238 @@
                 "summary": "Login",
                 "description": "Returns object of user data",
                 "operationId": "Login",
-                "parameters": [
-                    {
-                        "name": "login",
-                        "in": "path",
-                        "description": "Registered Email Or Phone",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "password",
-                        "in": "path",
-                        "description": "User Password",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "accept",
-                        "in": "header",
-                        "description": "accept type",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginObject"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/successfullLogin"
+                                }
+                            }
+                        }
                     },
                     "401": {
-                        "description": "Unauthorised"
+                        "description": "Unauthorised",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthorisedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/validationErrors"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
                     {
                         "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "incomplete"
+                ],
+                "summary": "Login",
+                "description": "Returns object of user data",
+                "operationId": "Login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/successfullLogin"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthorisedError"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "validation errors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/validationErrors"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security_example": []
+                    }
+                ]
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "description": "invoke token",
+                "operationId": "logOut",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/logoutSuccess"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthenticatedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/auth/verify": {
+            "post": {
+                "tags": [
+                    "incomplete"
+                ],
+                "summary": "Verify User Email",
+                "description": "Returns object of user data",
+                "operationId": "getUserData",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/userData"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthenticatedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/auth/reverify": {
+            "get": {
+                "tags": [
+                    "incomplete"
+                ],
+                "summary": "request verification code again",
+                "description": "Returns object of user data",
+                "operationId": "getUserData",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/userData"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthenticatedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
                     }
                 ]
             }
@@ -79,28 +278,70 @@
                 "summary": "Get User data",
                 "description": "Returns object of user data",
                 "operationId": "getUserData",
-                "parameters": [
-                    {
-                        "name": "accept",
-                        "in": "header",
-                        "description": "accept type",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/userData"
+                                }
+                            }
+                        }
                     },
                     "401": {
-                        "description": "Unauthorised"
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthenticatedError"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
                     {
-                        "api_key_security_example": []
+                        "Authorization": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "incomplete"
+                ],
+                "summary": "update User data",
+                "description": "Update User Data",
+                "operationId": "updateUserData",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/userData"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorised",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "$ref": "#/components/schemas/unauthorisedError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
                     }
                 ]
             }
@@ -108,5 +349,189 @@
     },
     "security": [
         []
-    ]
+    ],
+    "components": {
+        "schemas": {
+          "LoginObject": {
+            "type": "object",
+            "properties": {
+              "login": {
+                "type": "string",
+                "required": true,
+                "description": "Can be Phone Or Email"
+              },
+              "password": {
+                "type": "string",
+                "required": true
+              }
+            }
+          },
+          "successfullLogin": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "example": "success"
+              },
+              "type": {
+                "type": "string",
+                "example": "Bearer"
+              },
+              "access_token": {
+                "type": "string",
+                "example": "J.W.T"
+              },
+              "access_token_expiration": {
+                "type": "string",
+                "example": "2022-11-02T08:45:58.000000Z"
+              },
+              "user_data": {
+                "type": "Object",
+                "$ref": "#/components/schemas/userData"
+              }
+            }
+          },
+          "validationErrors": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "the given data was invalid"
+                },
+                "errors": {
+                    "type": "object",
+                    "properties": {
+                        "field_name": {
+                            "type": "array",
+                            "example": ["field_name is required"]
+                        },
+                        "password": {
+                            "type": "array",
+                            "example": ["password is required", "password must be at least 8 chars"]
+                        }
+                    }
+                }
+            }
+          },
+          "unauthorisedError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "unauthorised"
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 401
+                }
+            }
+          },
+          "unauthenticatedError": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Unauthenticated."
+                }
+            }
+          },
+          "logoutSuccess": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "User logged out successfully."
+                }
+            }
+          },
+          "userData": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "admin user"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "01222222222"
+                },
+                "uuid": {
+                    "type": "string",
+                    "example": "59b7c565-5f2d-44db-a94e-f2ca7e1747dc"
+                },
+                "email_verified_at": {
+                    "type": "string",
+                    "example": "2021-11-01T17:15:07.000000Z"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2021-11-01T17:15:07.000000Z"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2021-11-01T17:15:07.000000Z"
+                },
+                "role": {
+                    "type": "string",
+                    "example": "user"
+                }
+            }
+          }
+        },
+        "parameters": {
+          "skipParam": {
+            "name": "skip",
+            "in": "query",
+            "description": "number of items to skip",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "limitParam": {
+            "name": "limit",
+            "in": "query",
+            "description": "max records to return",
+            "required": true,
+            "schema" : {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "responses": {
+          "NotFound": {
+            "description": "Entity not found."
+          },
+          "IllegalInput": {
+            "description": "Illegal input for operation."
+          },
+          "GeneralError": {
+            "description": "General Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeneralError"
+                }
+              }
+            }
+          }
+        },
+        "securitySchemes": {
+          "Authorization": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+          }
+        }
+      }
 }
